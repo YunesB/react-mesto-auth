@@ -1,0 +1,50 @@
+.authorization {
+  max-width: 882px;
+  margin: 60px auto 80px;
+  position: relative;
+}
+
+.authorization__heading {
+  font-size: 24px;
+  line-height: 29px;
+  text-align: center;
+}
+
+.authorization__form {
+  margin: 50px auto 15px;
+  display: flex;
+  flex-direction: column;
+  max-width: 358px;
+}
+
+.authorization__input {
+  border: 0;
+  padding-bottom: 13.26px;
+  border-bottom: 2px solid #cccccc;
+  font-size: 14px;
+  line-height: 17px;
+  background-color: unset;
+  margin-bottom: 30px;
+}
+
+.authorization__submit {
+  height: 50px;
+  border-radius: 2px;
+  border: none;
+  font-size: 18px;
+  line-height: 22px;
+  color: black;
+  margin: 200px 0 0;
+  width: 100%;
+}
+
+.authorization__submit:hover {
+  cursor: pointer;
+  opacity: 0.7;
+}
+
+@media screen and (max-width: 900px) {
+  .authorization {
+    margin: 0 19px;
+  }
+}
