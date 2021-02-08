@@ -3,8 +3,7 @@ import { Route, Switch, Redirect, withRouter } from 'react-router-dom';
 
 import Header from './Header.jsx';
 import Main from './Main.jsx';
-import SignUp from './SignUp.jsx';
-import SignIn from './SignIn.jsx';
+import Authorization from './Authorization.jsx';
 import Footer from './Footer.jsx';
 
 import ProtectedRoute from './ProtectedRoute';
@@ -20,9 +19,10 @@ import { CurrentUserContext } from '../contexts/CurrentUserContext.jsx';
 import { api } from '../utils/api.js';
 
 function App() {    
+
   let state = {
-      loggedIn: false
-    }
+    loggedIn: false
+  }
 
   const [isPageLoading, setIsPageLoading] = React.useState(true);
 
@@ -137,23 +137,13 @@ function App() {
     setSelectedCardOpen();
   }
 
-  function returnSubline() {
-    return (
-      <a href="/sign-in" class="header__subline">
-        Уже зарегистрированы? Войти
-      </a>
-    )
-  }
-
   return (
       <CurrentUserContext.Provider value={currentUser}>
         <div className="page">
           <Header/>
           <Switch>
-            {/* <ProtectedRoute path="/" loggedIn={state.loggedIn} component={Main} /> */}
-            <Route exact path="/">
-              {state.loggedIn ? <Redirect to="/" /> : <Redirect to="/sign-in" />}
-              <Main
+            <ProtectedRoute exact path="/" loggedIn={state.loggedIn} 
+                component={Main}                
                 onEditProfile={handleEditProfileClick}
                 onEditAvatar={handleEditAvatarClick}
                 onAddPlace={handleAddCardClick}
@@ -162,19 +152,22 @@ function App() {
                 onDeleteClick={handleCardDelete}
                 cards={cards}
               />
-            </Route>
             <Route path="/sign-up">
-              <SignIn 
+              <Authorization 
                 heading="Регистрация"
                 buttonName="Зарегистрироваться"
+                subline="Уже зарегистрированы? Войти"
               />
             </Route>
             <Route path="/sign-in">
-              <SignIn 
+              <Authorization 
                 heading="Войти"
                 buttonName="Войти"
-                subline={returnSubline}
+                subline=""
               />
+            </Route>
+            <Route exact path="/">
+              {state.loggedIn ? <Redirect to="/" /> : <Redirect to="/sign-up" />}
             </Route>
           </Switch>
           <Footer/>
