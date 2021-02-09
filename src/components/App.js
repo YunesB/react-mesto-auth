@@ -21,7 +21,6 @@ import { CurrentUserContext } from '../contexts/CurrentUserContext.jsx';
 import { api } from '../utils/api.js';
 
 function App() {
-
   const [isPageLoading, setIsPageLoading] = React.useState(true);
 
   const [isEditAvatarPopupOpen, setEditAvatarPopupOpen] = React.useState(false);

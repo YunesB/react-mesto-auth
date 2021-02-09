@@ -1,7 +1,7 @@
 /* eslint-disable react/jsx-no-target-blank */
 import mestoLogo from '../images/logo.svg'
 import React from 'react';
-import { useHistory, useEffect } from 'react-router-dom';
+import { useHistory } from 'react-router-dom';
 
 function Header(props) {
 
@@ -24,20 +24,20 @@ function Header(props) {
       setLink('/');
       setLinkText('На главную');
     }
-  })
+  });
 
-  function signOut(){
+  function signOut() {
     localStorage.removeItem('jwt');
     props.handleLogout();
     history.push('/sign-in');
-  }
+  };
 
   return (
         <header className="header">
           <a href="https://ya.ru" target="_blank" className="header__link">
             <img src={mestoLogo} className="header__logo" alt="Логотип проекта Mesto"/>
           </a>
-          <div class="header__container">
+          <div className="header__container">
             <span className="header__email-container">{props.email}</span>
             <a href={isLink} onClick={signOut} className="header__link-item">{isLinkText}</a>
           </div>

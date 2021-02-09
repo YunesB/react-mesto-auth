@@ -88,12 +88,12 @@ function Authorization(props) {
 
     return (
         <div className="authorization">
-            <h2 class="authorization__heading">{props.heading}</h2>
-            <form class="authorization__form" onSubmit={props.submit === 'Login' ? handleSubmitLogin : handleSubmitRegistration}>
-                <input type="email" class="authorization__input" placeholder="Email" onChange={handleEmailChange} required></input>
-                <input type="password" class="authorization__input" placeholder="Пароль" onChange={handlePasswordChange} required></input>
-                <button type="submit" class="authorization__submit">{props.buttonName}</button>
-                <Link to="/sign-in" class="authorization__link">{props.subline}</Link>
+            <h2 className="authorization__heading">{props.heading}</h2>
+            <form className="authorization__form" onSubmit={props.submit === 'Login' ? handleSubmitLogin : handleSubmitRegistration}>
+                <input type="email" className="authorization__input" placeholder="Email" onChange={handleEmailChange} required></input>
+                <input type="password" className="authorization__input" placeholder="Пароль" onChange={handlePasswordChange} required></input>
+                <button type="submit" className="authorization__submit">{props.buttonName}</button>
+                <Link to="/sign-in" className="authorization__link">{props.subline}</Link>
             </form>
             <InfoTooltip 
                 isOpen={isTooltipOpen}
