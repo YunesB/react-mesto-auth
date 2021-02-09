@@ -2,7 +2,6 @@ export const BASE_URL = 'https://auth.nomoreparties.co';
 
 function handleRes(res) {
   if (res.ok) {
-    console.log(res);
     return res.json();
   } else {
     console.log(res.status + ": " + res.statusText);
@@ -29,7 +28,7 @@ export const signIn = (email, password) => {
       'Accept': 'application/json',
       'Content-Type': 'application/json'
     },
-      body: JSON.stringify({ email, password })
+    body: JSON.stringify({ email, password })
   })
     .then(handleRes)
 }

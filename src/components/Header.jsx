@@ -1,7 +1,8 @@
 /* eslint-disable react/jsx-no-target-blank */
 import mestoLogo from '../images/logo.svg'
 import React from 'react';
-import { useHistory } from 'react-router-dom';
+import { useHistory, Link } from 'react-router-dom';
+// import Burger from './Burger/Burger.jsx';
 
 function Header(props) {
 
@@ -33,15 +34,17 @@ function Header(props) {
   };
 
   return (
-        <header className="header">
-          <a href="https://ya.ru" target="_blank" className="header__link">
-            <img src={mestoLogo} className="header__logo" alt="Логотип проекта Mesto"/>
-          </a>
-          <div className="header__container">
-            <span className="header__email-container">{props.email}</span>
-            <a href={isLink} onClick={signOut} className="header__link-item">{isLinkText}</a>
-          </div>
-        </header>
+    <header className="header">
+      <a href="https://ya.ru" target="_blank" className="header__link">
+        <img src={mestoLogo} className="header__logo" alt="Логотип проекта Mesto" />
+      </a>
+      <div className="header__container">
+        <span className="header__email-container">{props.email}</span>
+        <Link to={isLink} onClick={signOut} className="header__link-item">{isLinkText}</Link>
+      </div>
+      {/* <Burger
+      /> */}
+    </header>
   );
 }
 

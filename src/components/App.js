@@ -5,9 +5,8 @@ import { Route, Switch, Redirect, withRouter, useHistory } from 'react-router-do
 import Header from './Header.jsx';
 import Main from './Main.jsx';
 import Authorization from './Authorization.jsx';
-import Footer from './Footer.jsx';
 
-import ProtectedRoute from './ProtectedRoute';
+import ProtectedRoute from './ProtectedRoute.jsx';
 import * as auth from '../utils/Auth.jsx';
 
 import ConfirmationPopup from './ConfirmationPopup.jsx';
@@ -41,37 +40,38 @@ function App() {
   React.useEffect(() => {
     tokenCheck()
     Promise.all([
-        api.getUserInfo(), 
-        api.getInitialCards()])
-          .then(([userData, cards]) => {
-              setCurrentUser(userData);
-              setCards(cards);
-          })
-          .catch((err) => console.log(err))
-          .finally(() => {
-            setIsPageLoading(false);
-          })
+      api.getUserInfo(),
+      api.getInitialCards()])
+      .then(([userData, cards]) => {
+        setCurrentUser(userData);
+        setCards(cards);
+      })
+      .catch((err) => console.log(err))
+      .finally(() => {
+        setIsPageLoading(false);
+        console.log('success!')
+      })
   }, []);
 
   function handleUpdateUser(user) {
     setIsPageLoading(true);
     api.setUserInfo(user)
-      .then((user) => 
+      .then((user) =>
         setCurrentUser(user))
-      .catch((err) => 
+      .catch((err) =>
         console.log(err))
-      .finally(() => 
+      .finally(() =>
         closeAllPopups());
   }
 
   function handleUpdateAvatar(user) {
     setIsPageLoading(true);
     api.setUserAva(user)
-      .then((user) => 
+      .then((user) =>
         setCurrentUser(user))
-      .catch((err) => 
+      .catch((err) =>
         console.log(err))
-      .finally(() => 
+      .finally(() =>
         closeAllPopups());
   }
 
@@ -81,9 +81,9 @@ function App() {
       .then((data) => {
         setCards([data, ...cards])
       })
-      .catch((err) => 
+      .catch((err) =>
         console.log(err))
-      .finally(() => 
+      .finally(() =>
         closeAllPopups());
   }
 
@@ -94,7 +94,7 @@ function App() {
         const newCards = cards.map((c) => c._id === card._id ? newCard : c);
         setCards(newCards);
       })
-      .catch((err) => 
+      .catch((err) =>
         console.log(err));
   }
 
@@ -167,77 +167,77 @@ function App() {
   }
 
   return (
-      <CurrentUserContext.Provider value={currentUser}>
-        <div className="page">
-          <Header
-            handleLogout={componentWillUnmount}
-            email={isLoggedInUser}
+    <CurrentUserContext.Provider value={currentUser}>
+      <div className="page">
+        <Header
+          handleLogout={componentWillUnmount}
+          email={isLoggedInUser}
+        />
+        <Switch>
+          <ProtectedRoute exact path="/" loggedIn={isLoggedIn}
+            component={Main}
+            onEditProfile={handleEditProfileClick}
+            onEditAvatar={handleEditAvatarClick}
+            onAddPlace={handleAddCardClick}
+            onCardClick={handleCardClick}
+            onLikeClick={handleCardLike}
+            onDeleteClick={handleCardDelete}
+            cards={cards}
+            text="&copy; 2020 Mesto Russia"
           />
-          <Switch>
-            <ProtectedRoute exact path="/" loggedIn={isLoggedIn} 
-                component={Main}                
-                onEditProfile={handleEditProfileClick}
-                onEditAvatar={handleEditAvatarClick}
-                onAddPlace={handleAddCardClick}
-                onCardClick={handleCardClick}
-                onLikeClick={handleCardLike}
-                onDeleteClick={handleCardDelete}
-                cards={cards}
-              />
-            <Route path="/sign-up">
-              <Authorization 
-                heading="Регистрация"
-                buttonName="Зарегистрироваться"
-                subline="Уже зарегистрированы? Войти"
-                submit="Registration"
-              />
-            </Route>
-            <Route path="/sign-in">
-              <Authorization 
-                heading="Войти"
-                buttonName="Войти"
-                subline=""
-                submit="Login"
-                handleLogin={componentDidMount}
-              />
-            </Route>
-            <Route exact path="/">
-              {isLoggedIn ? <Redirect to="/" /> : <Redirect to="/sign-up" />}
-            </Route>
-            <Route render={() => <Redirect to={{pathname: "/"}} />} />
-          </Switch>
-          <Footer/>
-          <EditProfilePopup 
-            isOpen={isEditProfilePopupOpen} 
-            onClose={closeAllPopups}
-            onUpdateUser={handleUpdateUser}
-          />
-          <AddPlacePopup 
-            isOpen={isAddCardPopupOpen} 
-            onClose={closeAllPopups}
-            onCreateCard={handleAddCardSubmit}
-          />
-          <EditAvatarPopup 
-            isOpen={isEditAvatarPopupOpen} 
-            onClose={closeAllPopups}
-            onUpdateUser={handleUpdateAvatar}
-          />    
-          <ImagePopup 
-            isOpen={selectedCard ? 'popup_opened' : ''} 
-            card={selectedCard || ''}
-            onClose={closeAllPopups}
-          />
-          <ConfirmationPopup 
-            isOpen={isConfirmationPopupOpen} 
-            onClose={closeAllPopups}
-            onConfirm={handleDeletePopup}
-            card={currentCard}
-          /> 
-          <PageIsLoading 
-            isOpen={isPageLoading}
-          />
-        </div> 
-      </CurrentUserContext.Provider>
+          <Route path="/sign-up">
+            <Authorization
+              heading="Регистрация"
+              buttonName="Зарегистрироваться"
+              subline="Уже зарегистрированы? Войти"
+              submit="Registration"
+            />
+          </Route>
+          <Route path="/sign-in">
+            <Authorization
+              heading="Войти"
+              buttonName="Войти"
+              subline=""
+              submit="Login"
+              handleLogin={componentDidMount}
+            />
+          </Route>
+          <Route exact path="/">
+            {isLoggedIn ? <Redirect to="/" /> : <Redirect to="/sign-up" />}
+          </Route>
+          <Route render={() => <Redirect to={{ pathname: "/" }} />} />
+        </Switch>
+        <EditProfilePopup
+          isOpen={isEditProfilePopupOpen}
+          onClose={closeAllPopups}
+          onUpdateUser={handleUpdateUser}
+        />
+        <AddPlacePopup
+          isOpen={isAddCardPopupOpen}
+          onClose={closeAllPopups}
+          onCreateCard={handleAddCardSubmit}
+        />
+        <EditAvatarPopup
+          isOpen={isEditAvatarPopupOpen}
+          onClose={closeAllPopups}
+          onUpdateUser={handleUpdateAvatar}
+        />
+        <ImagePopup
+          isOpen={selectedCard ? 'popup_opened' : ''}
+          card={selectedCard || ''}
+          onClose={closeAllPopups}
+        />
+        <ConfirmationPopup
+          isOpen={isConfirmationPopupOpen}
+          onClose={closeAllPopups}
+          onConfirm={handleDeletePopup}
+          card={currentCard}
+        />
+        <PageIsLoading
+          isOpen={isPageLoading}
+        />
+      </div>
+    </CurrentUserContext.Provider>
   );
 }
 

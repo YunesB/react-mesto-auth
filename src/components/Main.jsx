@@ -14,7 +14,7 @@ function Main(props) {
                     <div className="profile-info__image-container">
                         <button type="button" className="profile-info__avatar-customizaton" onClick={props.onEditAvatar}>
                         </button>
-                        <img src={currentUser.avatar || loading} alt="Аватар" className="profile-info__image"/>
+                        <img src={currentUser.avatar || loading} alt="Аватар" className="profile-info__image" />
                     </div>
                     <div className="profile-info__container">
                         <div className="profile-info__name-box">
@@ -29,18 +29,21 @@ function Main(props) {
             <section className="elements">
                 <ul className="cards">
                     {props.cards.map((card) => (
-                        <Card 
-                            card={card} 
-                            key={card._id} 
+                        <Card
+                            card={card}
+                            key={card._id}
                             onCardClick={props.onCardClick}
-                            onLikeClick={props.onLikeClick} 
-                            onDeleteClick={props.onDeleteClick} 
+                            onLikeClick={props.onLikeClick}
+                            onDeleteClick={props.onDeleteClick}
                         />
                     ))}
                 </ul>
             </section>
+            <footer className="footer">
+                <p className="footer__credit">{props.text}</p>
+            </footer>
         </main>
-  );
+    );
 }
 
 export default Main;
