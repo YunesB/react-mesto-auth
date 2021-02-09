@@ -1,5 +1,6 @@
+/* eslint-disable no-unused-vars */
 import React from 'react';
-import { Route, Switch, Redirect, withRouter } from 'react-router-dom';
+import { Route, Switch, Redirect, withRouter, useHistory } from 'react-router-dom';
 
 import Header from './Header.jsx';
 import Main from './Main.jsx';
@@ -7,6 +8,7 @@ import Authorization from './Authorization.jsx';
 import Footer from './Footer.jsx';
 
 import ProtectedRoute from './ProtectedRoute';
+import * as auth from '../utils/Auth.jsx';
 
 import ConfirmationPopup from './ConfirmationPopup.jsx';
 import EditProfilePopup from './EditProfilePopup.jsx';
@@ -18,11 +20,7 @@ import PageIsLoading from './PageIsLoading';
 import { CurrentUserContext } from '../contexts/CurrentUserContext.jsx';
 import { api } from '../utils/api.js';
 
-function App() {    
-
-  let state = {
-    loggedIn: false
-  }
+function App() {
 
   const [isPageLoading, setIsPageLoading] = React.useState(true);
 
@@ -31,12 +29,18 @@ function App() {
   const [isAddCardPopupOpen, setAddCardPopupOpen] = React.useState(false);
   const [selectedCard, setSelectedCardOpen] = React.useState();
   const [isConfirmationPopupOpen, setConfirmationPopupOpen] = React.useState(false);
+  const [isLoggedIn, setLoggedIn] = React.useState(false);
 
   const [currentUser, setCurrentUser] = React.useState({});
   const [cards, setCards] = React.useState([]);
+
   let [currentCard, setCurrentCard] = React.useState({});
+  let [isLoggedInUser, setLoggedInUser] = React.useState('');
+
+  const history = useHistory();
 
   React.useEffect(() => {
+    tokenCheck()
     Promise.all([
         api.getUserInfo(), 
         api.getInitialCards()])
@@ -137,12 +141,41 @@ function App() {
     setSelectedCardOpen();
   }
 
+  function componentDidMount() {
+    tokenCheck();
+  };
+
+  function componentWillUnmount() {
+    localStorage.removeItem('jwt');
+    setLoggedInUser(false);
+  }
+
+  function tokenCheck() {
+    let jwt = localStorage.getItem('jwt');
+    if (jwt) {
+      auth.checkTokenValidity(jwt)
+        .then((res) => {
+          if (res) {
+            setLoggedIn(true);
+            setLoggedInUser(res.data.email);
+            history.push('/');
+          }
+        })
+        .catch(() => {
+          console.log('Error');
+        })
+    }
+  }
+
   return (
       <CurrentUserContext.Provider value={currentUser}>
         <div className="page">
-          <Header/>
+          <Header
+            handleLogout={componentWillUnmount}
+            email={isLoggedInUser}
+          />
           <Switch>
-            <ProtectedRoute exact path="/" loggedIn={state.loggedIn} 
+            <ProtectedRoute exact path="/" loggedIn={isLoggedIn} 
                 component={Main}                
                 onEditProfile={handleEditProfileClick}
                 onEditAvatar={handleEditAvatarClick}
@@ -157,6 +190,7 @@ function App() {
                 heading="Регистрация"
                 buttonName="Зарегистрироваться"
                 subline="Уже зарегистрированы? Войти"
+                submit="Registration"
               />
             </Route>
             <Route path="/sign-in">
@@ -164,11 +198,14 @@ function App() {
                 heading="Войти"
                 buttonName="Войти"
                 subline=""
+                submit="Login"
+                handleLogin={componentDidMount}
               />
             </Route>
             <Route exact path="/">
-              {state.loggedIn ? <Redirect to="/" /> : <Redirect to="/sign-up" />}
+              {isLoggedIn ? <Redirect to="/" /> : <Redirect to="/sign-up" />}
             </Route>
+            <Route render={() => <Redirect to={{pathname: "/"}} />} />
           </Switch>
           <Footer/>
           <EditProfilePopup 

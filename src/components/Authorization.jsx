@@ -1,12 +1,16 @@
 import React from 'react';
 import { useHistory, Link } from 'react-router-dom';
 import * as auth from '../utils/Auth.jsx';
+
 import InfoTooltip from './InfoTooltip.jsx';
+import PageIsLoading from './PageIsLoading';
 
 function Authorization(props) {
     const [email, setEmail] = React.useState('');
     const [password, setPassword] = React.useState('');
     const [isTooltipOpen, setTooltipOpen] = React.useState(false);
+    const [isResAdjustments, setResAdjustments] = React.useState(false);
+    const [isPageLoading, setIsPageLoading] = React.useState(false);
     const history = useHistory();
     
     function handleTooltipOpen() {
@@ -17,9 +21,18 @@ function Authorization(props) {
         setTooltipOpen(false);
     }
 
+    function handleResAdjustments() {
+        setResAdjustments(true);
+    }
+
     function handleEmailChange(evt) {
         const { value } = evt.target;
         setEmail(value)
+    }
+
+    function resetForm() {
+        setEmail('');
+        setPassword('')
     }
     
     function handlePasswordChange(evt) {
@@ -27,12 +40,36 @@ function Authorization(props) {
         setPassword(value)
     }
 
-    function handleSubmit(evt) {
+    function handleSubmitLogin(evt) {
+        setIsPageLoading(true);
+        evt.preventDefault();
+        auth.signIn(email, password)
+            .then((data) => {
+                if (data.token) {
+                    resetForm();
+                    localStorage.setItem('jwt', data.token);
+                    props.handleLogin();
+                } else {
+                    return
+                }
+            })
+        .catch(() => {
+            handleTooltipOpen();
+        })
+        .finally(() => {
+            setIsPageLoading(false);
+        })
+    }
+
+    function handleSubmitRegistration(evt) {
+        setIsPageLoading(true);
         evt.preventDefault();
         auth.signUp( email, password )
         .then((res) => {
             if (res) {
-                console.log(res);
+                resetForm();
+                handleResAdjustments();
+                handleTooltipOpen();
                 history.push('/sign-in');
             } else {
                 handleTooltipOpen();
@@ -40,15 +77,19 @@ function Authorization(props) {
             }
         })
         .catch(() => {
+            setIsPageLoading(true);
             handleTooltipOpen();
             console.log('Error');
-        });
+        })
+        .finally(() => {
+            setIsPageLoading(false);
+        })
     }
 
     return (
         <div className="authorization">
             <h2 class="authorization__heading">{props.heading}</h2>
-            <form class="authorization__form" onSubmit={handleSubmit}>
+            <form class="authorization__form" onSubmit={props.submit === 'Login' ? handleSubmitLogin : handleSubmitRegistration}>
                 <input type="email" class="authorization__input" placeholder="Email" onChange={handleEmailChange} required></input>
                 <input type="password" class="authorization__input" placeholder="Пароль" onChange={handlePasswordChange} required></input>
                 <button type="submit" class="authorization__submit">{props.buttonName}</button>
@@ -57,6 +98,10 @@ function Authorization(props) {
             <InfoTooltip 
                 isOpen={isTooltipOpen}
                 onClose={closeAllPopups}
+                resAdjust={isResAdjustments}
+            />
+            <PageIsLoading 
+                isOpen={isPageLoading}
             />
         </div>
     );
