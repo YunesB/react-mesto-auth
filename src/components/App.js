@@ -15,12 +15,15 @@ import EditAvatarPopup from './EditAvatarPopup.jsx';
 import AddPlacePopup from './AddPlacePopup.jsx';
 import ImagePopup from './ImagePopup';
 import PageIsLoading from './PageIsLoading';
+import InfoTooltip from './InfoTooltip.jsx';
 
 import { CurrentUserContext } from '../contexts/CurrentUserContext.jsx';
 import { api } from '../utils/api.js';
 
 function App() {
   const [isPageLoading, setIsPageLoading] = React.useState(true);
+  const [isTooltipOpen, setTooltipOpen] = React.useState(false);
+  const [isResAdjustments, setResAdjustments] = React.useState(false);
 
   const [isEditAvatarPopupOpen, setEditAvatarPopupOpen] = React.useState(false);
   const [isEditProfilePopupOpen, setEditProfilePopupOpen] = React.useState(false);
@@ -131,6 +134,14 @@ function App() {
     setSelectedCardOpen(id);
   }
 
+  function handleTooltipOpen() {
+    setTooltipOpen(true);
+  }
+
+  function handleResAdjustments() {
+    setResAdjustments(true);
+  }
+
   function closeAllPopups() {
     setEditAvatarPopupOpen(false);
     setEditProfilePopupOpen(false);
@@ -140,9 +151,54 @@ function App() {
     setSelectedCardOpen();
   }
 
-  function componentDidMount() {
-    tokenCheck();
-  };
+  function closeTooltipPopup() {
+    setTooltipOpen(false);
+  }
+
+  function handleLogin(email, password) {
+    setIsPageLoading(true);
+    if (!email || !password) {
+      handleTooltipOpen();
+      return;
+    }
+    auth.signIn(email, password)
+      .then((data) => {
+        if (data.token) {
+          localStorage.setItem('jwt', data.token);
+          tokenCheck();
+        } else {
+          return
+        }
+      })
+      .catch(() => {
+        handleTooltipOpen();
+      })
+      .finally(() => {
+        closeAllPopups(true);
+      })
+  }
+
+  function handleRegistration(email, password) {
+    setIsPageLoading(true);
+    auth.signUp(email, password)
+      .then((res) => {
+        if (res) {
+          handleResAdjustments();
+          handleTooltipOpen();
+          history.push('/sign-in');
+          closeAllPopups(true);
+        } else {
+          handleTooltipOpen();
+        }
+      })
+      .catch(() => {
+        setIsPageLoading(true);
+        handleTooltipOpen();
+      })
+      .finally(() => {
+        closeAllPopups(true);
+      })
+  }
 
   function componentWillUnmount() {
     localStorage.removeItem('jwt');
@@ -191,6 +247,7 @@ function App() {
               buttonName="Зарегистрироваться"
               subline="Уже зарегистрированы? Войти"
               submit="Registration"
+              handleSubmit={handleRegistration}
             />
           </Route>
           <Route path="/sign-in">
@@ -199,7 +256,7 @@ function App() {
               buttonName="Войти"
               subline=""
               submit="Login"
-              handleLogin={componentDidMount}
+              handleSubmit={handleLogin}
             />
           </Route>
           <Route exact path="/">
@@ -235,6 +292,11 @@ function App() {
         />
         <PageIsLoading
           isOpen={isPageLoading}
+        />
+        <InfoTooltip
+          isOpen={isTooltipOpen}
+          onClose={closeTooltipPopup}
+          resAdjust={isResAdjustments}
         />
       </div>
     </CurrentUserContext.Provider>

@@ -25,7 +25,7 @@ function Header(props) {
       setLink('/');
       setLinkText('На главную');
     }
-  });
+  }, [currentLoaction]);
 
   function signOut() {
     localStorage.removeItem('jwt');
