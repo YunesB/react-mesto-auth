@@ -15,8 +15,6 @@ function Authorization(props) {
         setPassword('');
     };
 
-    // почему resetForm не работает? не могу понять :) Куда бы я его не ставил, нигде не обнуляет инпуты.
-
     function handlePasswordChange(evt) {
         const { value } = evt.target;
         setPassword(value)
@@ -25,14 +23,12 @@ function Authorization(props) {
     function handleSubmitLogin(evt) {
         evt.preventDefault();
         props.handleSubmit(email, password);
-        resetForm()
+        resetForm();
     };
 
     function handleSubmitRegistration(evt) {
         evt.preventDefault();
         props.handleSubmit(email, password);
-        email = "";
-        password = "";
         resetForm();
     }
 
@@ -40,8 +36,8 @@ function Authorization(props) {
         <div className="authorization">
             <h2 className="authorization__heading">{props.heading}</h2>
             <form className="authorization__form" onSubmit={props.submit === 'Login' ? handleSubmitLogin : handleSubmitRegistration}>
-                <input type="email" className="authorization__input" placeholder="Email" onChange={handleEmailChange} required></input>
-                <input type="password" className="authorization__input" placeholder="Пароль" onChange={handlePasswordChange} required></input>
+                <input type="email" className="authorization__input" placeholder="Email" onChange={handleEmailChange} value={email} required></input>
+                <input type="password" className="authorization__input" placeholder="Пароль" onChange={handlePasswordChange} value={password} required></input>
                 <button type="submit" className="authorization__submit">{props.buttonName}</button>
                 <Link to="/sign-in" className="authorization__link">{props.subline}</Link>
             </form>

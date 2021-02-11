@@ -156,7 +156,6 @@ function App() {
   }
 
   function handleLogin(email, password) {
-    setIsPageLoading(true);
     if (!email || !password) {
       handleTooltipOpen();
       return;
@@ -164,6 +163,7 @@ function App() {
     auth.signIn(email, password)
       .then((data) => {
         if (data.token) {
+          setIsPageLoading(true);
           localStorage.setItem('jwt', data.token);
           tokenCheck();
         } else {
@@ -171,6 +171,7 @@ function App() {
         }
       })
       .catch(() => {
+        setResAdjustments(false);
         handleTooltipOpen();
       })
       .finally(() => {
@@ -193,16 +194,12 @@ function App() {
       })
       .catch(() => {
         setIsPageLoading(true);
+        setResAdjustments(false);
         handleTooltipOpen();
       })
       .finally(() => {
         closeAllPopups(true);
       })
-  }
-
-  function componentWillUnmount() {
-    localStorage.removeItem('jwt');
-    setLoggedInUser(false);
   }
 
   function tokenCheck() {
@@ -224,7 +221,7 @@ function App() {
 
   function signOut() {
     localStorage.removeItem('jwt');
-    componentWillUnmount();
+    setLoggedInUser(false);
     history.push('/sign-in');
   };
 
