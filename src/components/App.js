@@ -222,11 +222,17 @@ function App() {
     }
   }
 
+  function signOut() {
+    localStorage.removeItem('jwt');
+    componentWillUnmount();
+    history.push('/sign-in');
+  };
+
   return (
     <CurrentUserContext.Provider value={currentUser}>
       <div className="page">
         <Header
-          handleLogout={componentWillUnmount}
+          signOut={signOut}
           email={isLoggedInUser}
         />
         <Switch>

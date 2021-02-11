@@ -27,12 +27,6 @@ function Header(props) {
     }
   }, [currentLoaction]);
 
-  function signOut() {
-    localStorage.removeItem('jwt');
-    props.handleLogout();
-    history.push('/sign-in');
-  };
-
   return (
     <header className="header">
       <a href="https://ya.ru" target="_blank" className="header__link">
@@ -40,7 +34,7 @@ function Header(props) {
       </a>
       <div className="header__container">
         <span className="header__email-container">{props.email}</span>
-        <Link to={isLink} onClick={signOut} className="header__link-item">{isLinkText}</Link>
+        <Link to={isLink} onClick={props.signOut} className="header__link-item">{isLinkText}</Link>
       </div>
       {/* <Burger
       /> */}

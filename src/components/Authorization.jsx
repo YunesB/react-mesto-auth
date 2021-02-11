@@ -2,8 +2,8 @@ import React from 'react';
 import { Link } from 'react-router-dom';
 
 function Authorization(props) {
-    const [email, setEmail] = React.useState('');
-    const [password, setPassword] = React.useState('');
+    let [email, setEmail] = React.useState('');
+    let [password, setPassword] = React.useState('');
 
     function handleEmailChange(evt) {
         const { value } = evt.target;
@@ -31,7 +31,9 @@ function Authorization(props) {
     function handleSubmitRegistration(evt) {
         evt.preventDefault();
         props.handleSubmit(email, password);
-        resetForm()
+        email = "";
+        password = "";
+        resetForm();
     }
 
     return (
